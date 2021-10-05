@@ -3,19 +3,20 @@ public with sharing class MaintenanceRequestHelper {
         List<Case> maintenanceRequests = new List<Case>();
         Map<Id,Case> oldNew = new Map<Id,Case>();
         // El id de los casos viejos con los equipos con los que se relacionaba
-        Map<Id,List<Product2>> oldWithEquipment = new Map<Id,List<Product2>>();
+        Map<Id,List<Equipment_Maintenance_Item__c>> oldWithEquipment = new Map<Id,List<Equipment_Maintenance_Item__c>>();
 
         for(Case a : maintenanceRequestClosed) {
-            List<Product2> asociados = [
-                SELECT id FROM Product2
-                WHERE id IN (
-                    SELECT Equipment__c 
-                    FROM Equipment_Maintenance_Item__c
-                    WHERE Maintenance_Request__c =: a.id)
+            List<Equipment_Maintenance_Item__c> asociados = [
+                SELECT Equipment__c 
+                FROM Equipment_Maintenance_Item__c
+                WHERE Maintenance_Request__c =: a.id
             ]; 
+
+            
             oldWithEquipment.put(a.id, asociados);
             AggregateResult[] groupedResults = [
-                SELECT MIN(Maintenance_Cycle__c)min FROM Product2
+                SELECT MIN(equipo.Maintenance_Cycle__c)min 
+                FROM Equipment_Maintenance_Item__c eqItem, eqItem.Equipment__r equipo
                 WHERE id IN :asociados];
 
             Object minDueCycle =  groupedResults[0].get('min');
@@ -35,10 +36,10 @@ public with sharing class MaintenanceRequestHelper {
 
         for (Id key : oldWithEquipment.keySet()) {
             List<Equipment_Maintenance_Item__c> newMaintenanceRequest = new List<Equipment_Maintenance_Item__c>();
-            for(Product2 item : oldWithEquipment.get(key)){
+            for(Equipment_Maintenance_Item__c item : oldWithEquipment.get(key)){
                 newMaintenanceRequest.add(
                     new Equipment_Maintenance_Item__c(
-                        Equipment__c = item.id, 
+                        Equipment__c = item.Equipment__c, 
                         Maintenance_Request__c = oldNew.get(key).Id));
             }
             insert newMaintenanceRequest;
