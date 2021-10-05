@@ -3,12 +3,18 @@ public with sharing class MaintenanceRequestHelper {
         List<Case> maintenanceRequests = new List<Case>();
         Map<Id,Case> oldNew = new Map<Id,Case>();
         // El id de los casos viejos con los equipos con los que se relacionaba
-        Map<Id,List<Product2>> oldWithEquipment = new Map<Id,List<Product2>>();
+        Map<Id,Case> oldWithEquipment = [
+            SELECT id, (SELECT Equipment__c FROM Equipment_Maintenance_Item__c)
+            FROM Case
+            WHERE id IN : maintenanceRequestClosed
+        ];
 
+        
         AggregateResult[] groupedResults = 
             [
-                SELECT COUNT(Id), Industry 
-                FROM Equipment_Maintenance_Item__c equip, Equipment__r equip
+                SELECT MIN(equipo.Maintenance_Cycle__c)min
+                FROM Equipment_Maintenance_Item__c eqItem, eqItem.Equipment__r equipo
+                WHERE Maintenance_Request__c IN : maintenanceRequestClosed
                 GROUP BY Maintenance_Request__c
             ];
 
