@@ -2,9 +2,10 @@ public with sharing class MaintenanceRequestHelper {
     public static void updateWorkOrders(List<Case> maintenanceRequestClosed){
         List<Case> maintenanceRequests = new List<Case>();
         Map<Id,Case> oldNew = new Map<Id,Case>();
+        // 
         // El id de los casos viejos con los equipos con los que se relacionaba
         Map<Id,Case> oldWithEquipment = [
-            SELECT id, (SELECT Equipment__c FROM Equipment_Maintenance_Item__c)
+            SELECT id, (SELECT Maintenance_Request__r, Equipment__c FROM Equipment_Maintenance_Item__c)
             FROM Case
             WHERE id IN : maintenanceRequestClosed
         ];
