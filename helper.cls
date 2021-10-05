@@ -5,6 +5,13 @@ public with sharing class MaintenanceRequestHelper {
         // El id de los casos viejos con los equipos con los que se relacionaba
         Map<Id,List<Product2>> oldWithEquipment = new Map<Id,List<Product2>>();
 
+        AggregateResult[] groupedResults = 
+            [
+                SELECT COUNT(Id), Industry 
+                FROM Equipment_Maintenance_Item__c equip, Equipment__r equip
+                GROUP BY Maintenance_Request__c
+            ];
+
         for(Case a : maintenanceRequestClosed) { 
             boolean cond1 = a.Status != 'Closed';
             boolean cond2 = a.Type != 'Repair' && a.Type != 'Routine Maintenance';
