@@ -5,7 +5,12 @@ public with sharing class MaintenanceRequestHelper {
         // El id de los casos viejos con los equipos con los que se relacionaba
         Map<Id,List<Equipment_Maintenance_Item__c>> oldWithEquipment = new Map<Id,List<Equipment_Maintenance_Item__c>>();
 
-        for(Case a : maintenanceRequestClosed) {
+        for(Case a : maintenanceRequestClosed) { 
+            boolean cond1 = a.Status != 'Closed';
+            boolean cond2 = a.Type != 'Repair' && a.Type != 'Routine Maintenance';
+            if(cond1 || cond2) continue;
+            
+                        
             List<Equipment_Maintenance_Item__c> asociados = [
                 SELECT Equipment__c 
                 FROM Equipment_Maintenance_Item__c
@@ -51,10 +56,6 @@ public with sharing class MaintenanceRequestHelper {
 trigger MaintenanceRequest on Case (before update, after update) {
     if(Trigger.isAfter)
     {
-        List<Case> lista = [SELECT Id, Vehicle__c FROM Case 
-        WHERE (Id IN :Trigger.New) and (Status =: 'Closed') 
-            and ((Type =: 'Repair') or (Type =: 'Routine Maintenance'))];
-
-        MaintenanceRequestHelper.updateWorkOrders(lista);
+        MaintenanceRequestHelper.updateWorkOrders(Trigger.New);
     }
 }
