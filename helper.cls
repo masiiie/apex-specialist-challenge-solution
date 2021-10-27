@@ -5,7 +5,8 @@ public with sharing class MaintenanceRequestHelper {
         // 
         // El id de los casos viejos con los equipos con los que se relacionaba
         Map<Id,Case> oldWithEquipment = [
-            SELECT id, (SELECT Maintenance_Request__r, Equipment__c FROM Equipment_Maintenance_Item__c)
+            SELECT id, (SELECT Maintenance_Request__r, Equipment__c 
+            FROM Equipment_Maintenance_Item__c)
             FROM Case
             WHERE id IN : maintenanceRequestClosed
         ];
@@ -23,18 +24,7 @@ public with sharing class MaintenanceRequestHelper {
             boolean cond1 = a.Status != 'Closed';
             boolean cond2 = a.Type != 'Repair' && a.Type != 'Routine Maintenance';
             if(cond1 || cond2) continue;
-
-
-            List<Product2> asociados = [
-                SELECT id, Maintenance_Cycle__c 
-                FROM Product2
-                WHERE id IN : (SELECT Equipment__c 
-                FROM Equipment_Maintenance_Item__c
-                WHERE Maintenance_Request__c =: a.id)
-            ]; 
-
             
-            oldWithEquipment.put(a.id, asociados);
 
             Decimal minDueCycle =  10000;
             for(Product2 eq : asociados){
@@ -56,7 +46,8 @@ public with sharing class MaintenanceRequestHelper {
 
 
         for (Id key : oldWithEquipment.keySet()) {
-            List<Equipment_Maintenance_Item__c> newMaintenanceRequest = new List<Equipment_Maintenance_Item__c>();
+            List<Equipment_Maintenance_Item__c> newMaintenanceRequest = 
+                new List<Equipment_Maintenance_Item__c>();
             for(Product2 item : oldWithEquipment.get(key)){
                 newMaintenanceRequest.add(
                     new Equipment_Maintenance_Item__c(
