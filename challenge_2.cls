@@ -1,5 +1,4 @@
 public with sharing class WarehouseCalloutService implements Queueable {
-
     private static final String WAREHOUSE_URL = 'https://th-superbadge-apex.herokuapp.com/equipment';
     public void execute(QueueableContext context) {
         Http http = new Http();
@@ -41,4 +40,11 @@ global class ScheduledWarehouseCalloutService implements Schedulable {
    global void execute(SchedulableContext SC) {
       System.enqueueJob(new WarehouseCalloutService());
    }
+}
+
+
+public with sharing class DummyClass implements Queueable {
+    public void execute(QueueableContext context) {
+       system.debug('Loca que tu quieres??? 😅');  
+    }
 }
