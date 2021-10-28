@@ -7,14 +7,13 @@ public with sharing class WarehouseCalloutService implements Queueable {
         request.setEndpoint(WAREHOUSE_URL);
         request.setMethod('GET');
         HttpResponse response = http.send(request);
-
         
         if(response.getStatusCode() == 200) {
-            List<Object> results = (List<Object>) JSON.deserializeUntyped(response.getBody());
+            List<Object> results = (List<Object>) JSON.deserializeUntyped(response.getBody()); 
             
-            
-            for(Object item: results) {
-                System.debug(item + '\n');
+            for(object item: results) {
+                Map<String, Object> equipment = (Map<String, Object>) item;
+                System.debug(equipment.get('name') + '\n');
             }
         }    
     }
