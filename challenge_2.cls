@@ -1,4 +1,5 @@
-public with sharing class WarehouseCalloutService implements Queueable {
+public with sharing class WarehouseCalloutService implements Queueable, Database.AllowsCallouts {
+
     private static final String WAREHOUSE_URL = 'https://th-superbadge-apex.herokuapp.com/equipment';
     public void execute(QueueableContext context) {
         Http http = new Http();
@@ -32,6 +33,8 @@ public with sharing class WarehouseCalloutService implements Queueable {
                 prod.Maintenance_Cycle__c = (Decimal)info.get('maintenanceperiod');
             }
             update toUpdate;
+            
+            system.debug('se actualizo todo!!!!');
         }    
     }
 }
@@ -46,5 +49,15 @@ global class ScheduledWarehouseCalloutService implements Schedulable {
 public with sharing class DummyClass implements Queueable {
     public void execute(QueueableContext context) {
        system.debug('Loca que tu quieres??? 😅');  
+
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(WAREHOUSE_URL);
+        request.setMethod('GET');
+        HttpResponse response = http.send(request);
+        
+        if(response.getStatusCode() == 200) {
+            system.debug('Todo salio bien!!!! 😁');
+        }
     }
 }
