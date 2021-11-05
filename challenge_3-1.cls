@@ -67,9 +67,12 @@ public class TestDataFactory {
         List<Vehicle__c> vehicles = [select id from Vehicle__c];
         List<Case> maintenanceRequests = new List<Case>();
         for(Vehicle__c vh : vehicles){
-            maintenanceRequests.add(new Case(Vehicle__c = vh.Id, Type = 'Routine Maintenance', Date_Reported__c = Date.today()));
-            insert maintenanceRequests;
+            maintenanceRequests.add(new Case(
+                status = 'New',
+                Vehicle__c = vh.Id, Type = 'Routine Maintenance', 
+                Date_Reported__c = Date.today()));
         }
+        insert maintenanceRequests;
         return maintenanceRequests;
     }
 
