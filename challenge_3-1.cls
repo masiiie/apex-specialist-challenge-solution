@@ -33,8 +33,7 @@ public with sharing class MaintenanceRequestHelperTest {
         for(Case caseItem : newCases){
             caseItem.status = 'Closed';
         }
-        Database.SaveResult[] results = Database.update(toUpdate, false);
-        //update newCases;
+        Database.SaveResult[] results = Database.update(newCases, false);
         Test.stopTest();
 
 
@@ -64,7 +63,7 @@ public with sharing class MaintenanceRequestHelperTest {
 
 @isTest
 public class TestDataFactory {
-    public static List<Account> createMaintenanceRequest() {
+    public static List<Case> createMaintenanceRequest() {
         List<Vehicle__c> vehicles = [select id from Vehicle__c];
         List<Case> maintenanceRequests = new List<Case>();
         for(Vehicle__c vh : vehicles){
@@ -74,13 +73,13 @@ public class TestDataFactory {
         return maintenanceRequests;
     }
 
-    public static List<Equipment_Maintenance_Item__c> createJoinRecords(int eq_size){
+    public static List<Equipment_Maintenance_Item__c> createJoinRecords(integer eq_size){
     List<Product2> equipment = [select id from Product2];
     List<Case> maintenanceRequest = [select id from Case]; 
     List<Equipment_Maintenance_Item__c> joinRecords = new List<Equipment_Maintenance_Item__c>();
 
     for(Case mr : maintenanceRequest){
-        for(i=0; i< eq_size;i++){
+        for(integer i=0; i< eq_size;i++){
             joinRecords.add(new Equipment_Maintenance_Item__c(Equipment__c = equipment.get(i).Id, Maintenance_Request__c = mr.Id));
         }
     }
