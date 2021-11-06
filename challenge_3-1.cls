@@ -161,14 +161,13 @@ public with sharing class MaintenanceRequestHelperTest {
             where Maintenance_Request__c = caseNew.id and 
             (Equipment__c = eqM1.Equipment__c or Equipment__c = eqM2.Equipment__c)];
 
+        integer minD = Integer.valueOf(math.min(eqs[0].Maintenance_Cycle__c, eqs[1].Maintenance_Cycle__c));
+        
         system.assertEquals(cases.size()+1, casesAfter.size());
         system.assertEquals(caseCreated.Vehicle__c, caseNew.Vehicle__c);
         system.assertEquals(2, eqsAfter.size());
         system.assertNotEquals(null, caseNew.Subject);
-        system.assertEquals(caseNew.Date_Reported__c, caseNew.CreatedDate)
-        system.assertEquals(
-            caseNew.Date_Reported__c + min(eqs[0].Maintenance_Cycle__c, eqs[1].Maintenance_Cycle__c), 
-            caseNew.Date_Due__c);
-
+        system.assertEquals(caseNew.Date_Reported__c, caseNew.CreatedDate);
+        system.assertEquals(caseNew.Date_Reported__c + minD, caseNew.Date_Due__c);
     }
 }
