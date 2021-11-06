@@ -22,7 +22,8 @@ public with sharing class MaintenanceRequestHelper {
 
             Decimal minDueCycle = (Decimal)element.get('min');
 
-            Case newRequest = new Case(Vehicle__c = (id)element.get('Vehicle__c'), 
+            Case newRequest = new Case(
+                Vehicle__c = (id)element.get('Vehicle__c'), 
                 Type = 'Routine Maintenance',
                 Status = 'New',
                 Subject = 'This is a routine maintenance request! ' + element.get('Vehicle__c'),
