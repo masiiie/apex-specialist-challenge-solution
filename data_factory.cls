@@ -14,9 +14,8 @@ public class TestDataFactory {
         return maintenanceRequests;
     }
 
-    public static List<Equipment_Maintenance_Item__c> createJoinRecords(integer eq_size){
-    List<Product2> equipment = [select id from Product2];
-    List<Case> maintenanceRequest = [select id from Case]; 
+    public static List<Equipment_Maintenance_Item__c> createJoinRecords(integer eq_size, List<Case> maintenanceRequest){
+    List<Product2> equipment = [select id from Product2]; 
     List<Equipment_Maintenance_Item__c> joinRecords = new List<Equipment_Maintenance_Item__c>();
 
     for(Case mr : maintenanceRequest){

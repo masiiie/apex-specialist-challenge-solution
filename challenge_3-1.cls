@@ -2,30 +2,49 @@
 
 delete[select id from case];
 CreateDefaultData.createDefaultData();
+
+
+Line: 44, Column: 1
+System.AssertException: Assertion Failed: Expected: 78, Actual: 82
+
+Line: 44, Column: 1
+System.AssertException: Assertion Failed: Expected: 86, Actual: 90
+
+
+Line: 44, Column: 1
+System.AssertException: Assertion Failed: Expected: 86, Actual: 90
+
+
+Line: 44, Column: 1
+System.AssertException: Assertion Failed: Expected: 94, Actual: 98
+
+Line: 43, Column: 1
+System.AssertException: Assertion Failed: Expected: 102, Actual: 106
+
 */
 
 @isTest
 public with sharing class MaintenanceRequestHelperTest {
     
    @isTest public static void test1() {
-        List<Case> newAfterTrigger_before = [
+        List<Case> newBeforeTrigger = [
             select id 
             from case 
             where status = 'New' and type= 'Routine Maintenance'];  
-        List<Equipment_Maintenance_Item__c> eq_maintenance_list_before = [
-                select id
-                from Equipment_Maintenance_Item__c 
-                where Maintenance_Request__c IN : newAfterTrigger_before]; 
+        List<Equipment_Maintenance_Item__c> eqMaintenanceBefore = [
+            select id
+            from Equipment_Maintenance_Item__c
+            where Maintenance_Request__c IN : newBeforeTrigger]; 
 
         //data factory
         List<Case> newCases = TestDataFactory.createMaintenanceRequest();
         List<Equipment_Maintenance_Item__c> newEqMaintenanceItem = 
-            TestDataFactory.createJoinRecords(2);
+            TestDataFactory.createJoinRecords(2, newCases);
 
-        List<Equipment_Maintenance_Item__c> eq_maintenance_list_in_newcases = [
-        select id
-        from Equipment_Maintenance_Item__c 
-        where Maintenance_Request__c IN : newCases];
+        List<Equipment_Maintenance_Item__c> eqMaintenanceInNewcases = [
+            select id
+            from Equipment_Maintenance_Item__c 
+            where Maintenance_Request__c IN : newCases];
         
         Test.startTest();
         for(Case caseItem : newCases){
@@ -44,16 +63,15 @@ public with sharing class MaintenanceRequestHelperTest {
             select id 
             from case 
             where status = 'New' and type= 'Routine Maintenance'];
-        List<Equipment_Maintenance_Item__c> eq_maintenance_list_in_newAfterTrigger = [
-                select id
-                from Equipment_Maintenance_Item__c 
-                where Maintenance_Request__c IN : newAfterTrigger];
+        List<Equipment_Maintenance_Item__c> eqMaintenanceInNewAfterTrigger = [
+            select id
+            from Equipment_Maintenance_Item__c 
+            where Maintenance_Request__c IN : newAfterTrigger];
         
         //assertEquals(expected, actual, msg)
-        system.assertEquals(newAfterTrigger_before.size() + newCases.size(), 
-        newAfterTrigger.size());
+        system.assertEquals(newBeforeTrigger.size() + newCases.size(), newAfterTrigger.size());
         system.assertEquals(
-            eq_maintenance_list_before.size() + eq_maintenance_list_in_newcases.size(), 
-            eq_maintenance_list_in_newAfterTrigger.size());
+            eqMaintenanceBefore.size() + eqMaintenanceInNewcases.size(), 
+            eqMaintenanceInNewAfterTrigger.size());
     }
 }
