@@ -133,14 +133,14 @@ public with sharing class MaintenanceRequestHelperTest {
         List<Equipment_Maintenance_Item__c> allEMI = [select id from Equipment_Maintenance_Item__c];
 
         Test.startTest();
-        for(Case negativeCase : cases{
+        for(Case negativeCase : cases){
             negativeCase.status = 'Closed';
         }
         update cases;
         Test.stopTest();
 
-        system.assert(allCases.size(), [select id from Case].size());
-        system.assert(allEMI.size(), [select id from Equipment_Maintenance_Item__c]);
+        system.assertEquals(allCases.size(), [select id from Case].size());
+        system.assertEquals(allEMI.size(), [select id from Equipment_Maintenance_Item__c].size());
         
     }
 
