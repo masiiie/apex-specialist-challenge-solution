@@ -1,3 +1,6 @@
+// https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_testing_data.htm
+// https://blog.truesalessoft.com/unit-test-best-practices-in-salesforce/
+
 @isTest public with sharing class TestDataFactory {
     public static List<Case> createMaintenanceRequest(integer count, Boolean otherTypes) {
         List<Vehicle__c> vehicles =  createVehicles();
