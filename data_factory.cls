@@ -1,21 +1,25 @@
 @isTest
 public class TestDataFactory {
-    public static List<Case> createMaintenanceRequest(integer count) {
+    public static List<Case> createMaintenanceRequest(integer count, Boolean otherTypes) {
         List<Vehicle__c> vehicles = [select id from Vehicle__c limit :count];
         List<Case> maintenanceRequests = new List<Case>();
-        integer indexVehicle = 0;
 
+        String[] tipos1 = ['Mechanical', 'Electrical', 'Electronic', 'Structural', 'Other'];
+        String[] tipos2 = ['Routine Maintenance', 'Repair'];
+        
+        integer indexVehicle = 0;
         for(integer i=0; i< count;i++){
             if(indexVehicle == vehicles.size()) indexVehicle = 0;
-            String tipo = math.mod(i, 2) == 0 ? 'Routine Maintenance' : 'Repair';
+            String tipo = otherTypes ? 
+                tipos1.get(math.mod(i, tipos1.size())) : 
+                tipos2.get(math.mod(i, 2));
             maintenanceRequests.add(new Case(
                 Vehicle__c = vehicles.get(indexVehicle).Id, 
                 Type = tipo, 
                 status = 'New',
                 Date_Reported__c = Date.today()));
             indexVehicle++;
-        }
-
+        }  
         insert maintenanceRequests;
         return maintenanceRequests;
     }

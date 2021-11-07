@@ -37,7 +37,7 @@ public with sharing class MaintenanceRequestHelperTest {
             where Maintenance_Request__c IN : closedBeforeTrigger]; 
 
         //data factory
-        List<Case> newCases = TestDataFactory.createMaintenanceRequest();
+        List<Case> newCases = TestDataFactory.createMaintenanceRequest(300, false);
         List<Equipment_Maintenance_Item__c> newEqMaintenanceItem = 
             TestDataFactory.createJoinRecords(2, newCases);
 
@@ -90,13 +90,13 @@ public with sharing class MaintenanceRequestHelperTest {
         */
     }
 
-       public static void test2() 
+    public static void test2() 
    {
         List<Case> closedBeforeTrigger = [
             select id 
             from case 
             where status = 'Closed'];  
-        List<Case> newCases = TestDataFactory.createMaintenanceRequest();
+        List<Case> newCases = TestDataFactory.createMaintenanceRequest(5, false);
 
 
         for(Case caseItem : newCases){
@@ -125,6 +125,7 @@ public with sharing class MaintenanceRequestHelperTest {
 
     @isTest public static void test3()
     {
+        
         Case caseCreated = new Case(
                 Vehicle__c = (id)'a025f000004mlyjAAA', 
                 Type = 'Repair', 
