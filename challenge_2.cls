@@ -23,8 +23,10 @@ public with sharing class WarehouseCalloutService implements Queueable, Database
                 select Replacement_Part__c, Cost__c, Current_Inventory__c, Lifespan_Months__c, Maintenance_Cycle__c, Warehouse_SKU__c
                 from Product2
                 where Warehouse_SKU__c IN: myMap.keyset()];
+            List<string> updatedID = new List<string>();        
 
             for(product2 prod: toUpdate){
+                updatedID.add((string)prod.Warehouse_SKU__c);
                 Map<String, Object> info = (Map<String, Object>)myMap.get((string)prod.Warehouse_SKU__c);
                 prod.Replacement_Part__c = true; //info.get('replacement');
                 prod.Cost__c = (Decimal)info.get('cost');
@@ -33,6 +35,31 @@ public with sharing class WarehouseCalloutService implements Queueable, Database
                 prod.Maintenance_Cycle__c = (Decimal)info.get('maintenanceperiod');
             }
             update toUpdate;
+
+            /*
+            replacement part (always true), 
+            cost, 
+            current inventory, 
+            lifespan, 
+            maintenance cycle, and 
+            warehouse SKU
+             */
+
+            List<Product2> toInsert = new List<Product2>();
+            for(string key: myMap.keyset()){
+                if(!updatedID.contains(key)){
+                    Map<String, Object> info = (Map<String, Object>)myMap.get(key);
+                    toInsert.add(new Product2(
+                        Maintenance_Cycle__c=(Decimal)info.get('maintenanceperiod'),
+                        Lifespan_Months__c=(Decimal)info.get('lifespan'),
+                        Cost__c=(Decimal)info.get('cost'),
+                        Replacement_Part__c=true,
+                        Warehouse_SKU__c=(string)info.get('_id'),
+                        name=(string)info.get('name')
+                    ));
+                }
+            }
+            insert toInsert;
             
             system.debug('se actualizo todo!!!!');
         }    
@@ -43,21 +70,4 @@ global class ScheduledWarehouseCalloutService implements Schedulable {
    global void execute(SchedulableContext SC) {
       System.enqueueJob(new WarehouseCalloutService());
    }
-}
-
-
-public with sharing class DummyClass implements Queueable {
-    public void execute(QueueableContext context) {
-       system.debug('Loca que tu quieres??? 😅');  
-
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint(WAREHOUSE_URL);
-        request.setMethod('GET');
-        HttpResponse response = http.send(request);
-        
-        if(response.getStatusCode() == 200) {
-            system.debug('Todo salio bien!!!! 😁');
-        }
-    }
 }
