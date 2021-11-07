@@ -123,14 +123,32 @@ public with sharing class MaintenanceRequestHelperTest {
         system.assertEquals(0, eqMaintenanceAfterTrigger.size());
     }
 
+    @isTest public static void negativeCase()
+    {
+        List<Case> cases = TestDataFactory.createMaintenanceRequest(6, true);
+        List<Equipment_Maintenance_Item__c> newEqMaintenanceItem = 
+            TestDataFactory.createJoinRecords(2, cases);
+
+        List<Case> allCases = [select id from Case];
+        List<Equipment_Maintenance_Item__c> allEMI = [select id from Equipment_Maintenance_Item__c];
+
+        Test.startTest();
+        for(Case negativeCase : cases{
+            negativeCase.status = 'Closed';
+        }
+        update cases;
+        Test.stopTest();
+
+        system.assert(allCases.size(), [select id from Case].size());
+        system.assert(allEMI.size(), [select id from Equipment_Maintenance_Item__c]);
+        
+    }
+
     @isTest public static void test3()
     {
-        
-        Case caseCreated = new Case(
-                Vehicle__c = (id)'a025f000004mlyjAAA', 
-                Type = 'Repair', 
-                Status = 'New',
-                Date_Reported__c = Date.today());
+        Case caseCreated = TestDataFactory.createMaintenanceRequest(1, false);
+        List<Equipment_Maintenance_Item__c> newEqMaintenanceItem = 
+            TestDataFactory.createJoinRecords(2, newCases);
         insert caseCreated;
 
         List<Product2> eqs = [select id, Maintenance_Cycle__c from Product2 limit 2];

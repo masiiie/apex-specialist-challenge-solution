@@ -4,8 +4,8 @@ public class TestDataFactory {
         List<Vehicle__c> vehicles = [select id from Vehicle__c limit :count];
         List<Case> maintenanceRequests = new List<Case>();
 
-        String[] tipos1 = ['Mechanical', 'Electrical', 'Electronic', 'Structural', 'Other'];
-        String[] tipos2 = ['Routine Maintenance', 'Repair'];
+        String[] tipos1 = new String[]{'Mechanical', 'Electrical', 'Electronic', 'Structural', 'Other'};
+        String[] tipos2 = new String[]{'Routine Maintenance', 'Repair'};
         
         integer indexVehicle = 0;
         for(integer i=0; i< count;i++){
