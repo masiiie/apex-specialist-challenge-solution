@@ -11,6 +11,11 @@ public class WarehouseCalloutServiceMock implements HttpCalloutMock {
 
 @IsTest
 private class WarehouseCalloutServiceTest {
+    @testSetup
+    static void setup() {
+        TestDataFactory.createEquipment(); 
+    }
+    
     @isTest static void test1() {
         Test.setMock(HttpCalloutMock.class, new WarehouseCalloutServiceMock());  
         WarehouseCalloutService wCS = new WarehouseCalloutService();
